@@ -1,6 +1,15 @@
 #include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #define TURN_ON 1024
+
+const char *ssid = "Esox_temp";
+const char *password = "2829Krenick&";
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 double light_index = 1;
 
@@ -26,8 +35,15 @@ void setup() {
    pinMode(D5, INPUT);   // motion sensor
    pinMode(D2, OUTPUT);  // light
    // pinMode(D8, OUTPUT);  // motor
-
    digitalWrite(D2, LOW);
+
+   WiFi.begin(ssid, password);
+   while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+   }
+   timeClient.begin();
+   timeClient.setTimeOffset(60 * 60);
+   Serial.println(timeClient.getFormattedTime());
 }
 
 void loop() {
@@ -35,22 +51,25 @@ void loop() {
    bool turnOn = false;
    bool printingStatus = false;
 
-   while (val == HIGH || turnOn) {
-      turnOn = false;
-      printingStatus = true;
-      Serial.printf("Pohyb byl zaznamenan!\n");
-      // digitalWrite(D2, HIGH);
-      turnOnLineary();
-      Serial.printf("\n");
-      delay(30000);
+   timeClient.update();
+   if (timeClient.getHours() > 16 || timeClient.getHours() < 9) {
+      while (val == HIGH || turnOn) {
+         turnOn = false;
+         printingStatus = true;
+         Serial.printf("Pohyb byl zaznamenan!\n");
+         // digitalWrite(D2, HIGH);
+         turnOnLineary();
+         Serial.printf("\n");
+         delay(30000);
 
-      for (int i = 0; i < 100 && !turnOn; ++i) {
-         val = digitalRead(D5);
-         if (val == HIGH) {
-            turnOn = true;
-            Serial.printf("Opet spatren pohyb!\n");
+         for (int i = 0; i < 100 && !turnOn; ++i) {
+            val = digitalRead(D5);
+            if (val == HIGH) {
+               turnOn = true;
+               Serial.printf("Opet spatren pohyb!\n");
+            }
+            delay(10);
          }
-         delay(10);
       }
    }
    if (printingStatus) {
