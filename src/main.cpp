@@ -12,9 +12,11 @@ void setup() {
 void loop() {
    int val = digitalRead(D5);
    bool turnOn = false;
+   bool printingStatus = false;
 
    while (val == HIGH || turnOn) {
       turnOn = false;
+      printingStatus = true;
       Serial.printf("Pohyb byl zaznamenan!\n");
       digitalWrite(D2, HIGH);
       delay(30000);
@@ -28,6 +30,8 @@ void loop() {
          delay(10);
       }
    }
-   Serial.printf("Vypinam svetlo.\n");
-   digitalWrite(D2, LOW);
+   if (printingStatus) {
+      Serial.printf("Vypinam svetlo.\n");
+      digitalWrite(D2, LOW);
+   }
 }
