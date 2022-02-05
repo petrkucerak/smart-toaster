@@ -4,6 +4,7 @@ void setup() {
    Serial.begin(115200);
    pinMode(D5, INPUT);   // motion sensor
    pinMode(D2, OUTPUT);  // light
+   // pinMode(D8, OUTPUT);  // motor
 
    digitalWrite(D2, LOW);
 }
