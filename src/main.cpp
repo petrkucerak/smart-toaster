@@ -52,26 +52,26 @@ void loop() {
    bool printingStatus = false;
 
    timeClient.update();
-   if (timeClient.getHours() > 16 || timeClient.getHours() < 9) {
-      while (val == HIGH || turnOn) {
-         turnOn = false;
-         printingStatus = true;
-         Serial.printf("Pohyb byl zaznamenan!\n");
-         // digitalWrite(D2, HIGH);
-         turnOnLineary();
-         Serial.printf("\n");
-         delay(30000);
 
-         for (int i = 0; i < 100 && !turnOn; ++i) {
-            val = digitalRead(D5);
-            if (val == HIGH) {
-               turnOn = true;
-               Serial.printf("Opet spatren pohyb!\n");
-            }
-            delay(10);
+   while (val == HIGH || turnOn) {
+      turnOn = false;
+      printingStatus = true;
+      Serial.printf("Pohyb byl zaznamenan!\n");
+      // digitalWrite(D2, HIGH);
+      turnOnLineary();
+      Serial.printf("\n");
+      delay(30000);
+
+      for (int i = 0; i < 100 && !turnOn; ++i) {
+         val = digitalRead(D5);
+         if (val == HIGH) {
+            turnOn = true;
+            Serial.printf("Opet spatren pohyb!\n");
          }
+         delay(10);
       }
    }
+
    if (printingStatus) {
       Serial.printf("Vypinam svetlo.\n");
       turnOffLineary();
