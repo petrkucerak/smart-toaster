@@ -1,5 +1,26 @@
 #include <Arduino.h>
 
+#define TURN_ON 1024
+
+double light_index = 1;
+
+void turnOnLineary() {
+   if (!light_index) light_index = 1;
+   while (light_index < TURN_ON) {
+      light_index = light_index * 1.2;
+      analogWrite(D2, light_index);
+      delay(100);
+   }
+}
+
+void turnOffLineary() {
+   while (light_index > 0) {
+      light_index = light_index / 1.2;
+      analogWrite(D2, light_index);
+      delay(100);
+   }
+}
+
 void setup() {
    Serial.begin(115200);
    pinMode(D5, INPUT);   // motion sensor
@@ -18,7 +39,9 @@ void loop() {
       turnOn = false;
       printingStatus = true;
       Serial.printf("Pohyb byl zaznamenan!\n");
-      digitalWrite(D2, HIGH);
+      // digitalWrite(D2, HIGH);
+      turnOnLineary();
+      Serial.printf("\n");
       delay(30000);
 
       for (int i = 0; i < 100 && !turnOn; ++i) {
@@ -32,6 +55,6 @@ void loop() {
    }
    if (printingStatus) {
       Serial.printf("Vypinam svetlo.\n");
-      digitalWrite(D2, LOW);
+      turnOffLineary();
    }
 }
